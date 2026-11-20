@@ -1,0 +1,10 @@
+{
+  "name": "ca2-ecommerce",
+  "version": "1.0.0",
+  "description": "Full stack e-commerce web application using Node.js, Express and MySQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "ISC"
+}
