@@ -1,0 +1,244 @@
+/*
+ * style.css
+ * Shared styles for every page of Natura Essence.
+ * Layout classes (container, two-col, three-col) are based on my CA1 website.
+ * Colours follow the "Botanical Wellness" palette, stored as CSS variables
+ * so they can be changed in one place.
+ */
+
+/* ---------- Colour palette (CSS custom properties) ---------- */
+:root {
+    --forest: #174A35;      /* main colour: header text, titles, buttons, footer */
+    --forest-dark: #0F3626; /* darker shade for button hover */
+    --herbal: #6F966B;      /* secondary colour: details and borders */
+    --sage: #B8C9A8;        /* soft details and footer links */
+    --cream: #F7F5EC;       /* main page background */
+    --sand: #DCCDB5;        /* soft dividers */
+    --terracotta: #B97754;  /* highlights and promotions */
+    --white: #FFFFFF;       /* cards and header background */
+}
+
+/* ---------- Base styles ---------- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+    color: var(--forest);            /* dark green text on light background for good contrast */
+    background-color: var(--cream);
+}
+
+/* Serif headings match the style of the brand banner */
+h1,
+h2,
+h3 {
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.2;
+}
+
+a {
+    color: var(--forest);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Centred content area used in every section */
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Narrower container so long paragraphs are easier to read */
+.narrow {
+    max-width: 760px;
+}
+
+/* ---------- Header and navigation ---------- */
+.site-header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--sand);
+}
+
+.navbar {
+    min-height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.logo img {
+    width: 260px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+}
+
+/* Underline shows the current page and the link under the mouse/keyboard focus */
+.nav-links a:hover,
+.nav-links a:focus-visible,
+.nav-links .active {
+    border-bottom-color: var(--herbal);
+}
+
+/* ---------- Two- and three-column layouts ---------- */
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.three-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+/* ---------- Hero section ---------- */
+.hero {
+    background: linear-gradient(135deg, var(--cream) 0%, #E9EFE1 100%);
+    padding: 60px 0;
+}
+
+.hero h1 {
+    margin: 0 0 20px;
+    font-size: 3.2rem;
+}
+
+.hero-text p {
+    font-size: 1.15rem;
+    margin: 0 0 30px;
+    max-width: 480px;
+}
+
+.hero-image {
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(23, 74, 53, 0.15);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 999px;            /* pill shape, as in the brand banner */
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn.primary {
+    background-color: var(--forest);
+    color: var(--white);
+}
+
+.btn.primary:hover,
+.btn.primary:focus-visible {
+    background-color: var(--forest-dark);
+}
+
+/* ---------- About section ---------- */
+.about {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.about h2 {
+    font-size: 2rem;
+    margin: 0 0 16px;
+}
+
+.about p {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+    background-color: var(--forest);
+    color: var(--white);
+    padding: 40px 0 20px;
+}
+
+.site-footer h2,
+.site-footer h3 {
+    margin-top: 0;
+}
+
+.site-footer a {
+    color: var(--sage);              /* light green keeps good contrast on dark green */
+}
+
+.site-footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.site-footer address {
+    font-style: normal;
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--herbal);
+    margin-top: 30px;
+    padding-top: 16px;
+    text-align: center;
+}
+
+/* ---------- Responsive design ---------- */
+
+/* Tablets and small laptops: columns stack to keep the content readable */
+@media (max-width: 800px) {
+    .two-col,
+    .three-col {
+        grid-template-columns: 1fr;
+    }
+
+    .hero h1 {
+        font-size: 2.4rem;
+    }
+}
+
+/* Mobile phones: navigation moves under the logo */
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        padding: 14px 0;
+        gap: 10px;
+    }
+
+    .logo img {
+        width: 200px;
+    }
+
+    .nav-links {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero {
+        padding: 40px 0;
+    }
+}
