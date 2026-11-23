@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--
+    register.html
+    Registration page. The form is checked in the browser by js/register.js
+    and then sent to the server (POST /api/register), which saves the new
+    customer in the MySQL "users" table.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create a Natura Essence account.">
+    <title>Natura Essence | Create an Account</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header: logo and main navigation, shared by all pages. -->
+    <header class="site-header">
+        <div class="container navbar">
+            <a class="logo" href="index.html">
+                <img src="images/logo.png" alt="Natura Essence - Nature-Inspired Wellness, Naturally." width="260" height="60">
+            </a>
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="basket.html">Basket</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Registration form inside a centred card. -->
+        <section class="form-section">
+            <div class="form-card">
+                <h1>Create an Account</h1>
+                <p class="form-intro">Join Natura Essence to shop our nature-inspired wellness essentials.</p>
+
+                <!-- novalidate: our own JavaScript shows the error messages,
+                     so they look the same in every browser. -->
+                <form id="registerForm" novalidate>
+                    <div class="form-group">
+                        <label for="name">Full name</label>
+                        <input type="text" id="name" name="name" autocomplete="name" maxlength="100" required>
+                        <div class="form-error" id="nameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" autocomplete="email" maxlength="255" required>
+                        <div class="form-error" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required aria-describedby="passwordHint">
+                        <small class="form-hint" id="passwordHint">At least 8 characters, including a letter and a number.</small>
+                        <div class="form-error" id="passwordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password" required>
+                        <div class="form-error" id="confirmPasswordError"></div>
+                    </div>
+
+                    <button type="submit" class="btn primary full-width">Create Account</button>
+
+                    <!-- Success or error message from the server (read aloud by screen readers). -->
+                    <div class="status" id="formStatus" role="status" aria-live="polite"></div>
+                </form>
+
+                <p class="form-switch">Already have an account? <a href="login.html">Log in</a></p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer: brand, contact details and navigation, shared by all pages. -->
+    <footer class="site-footer">
+        <div class="container three-col">
+            <div>
+                <h2>Natura Essence</h2>
+                <p>Nature-Inspired Wellness, Naturally.</p>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <address>
+                    <a href="mailto:contact@natura-essence.com">contact@natura-essence.com</a><br>
+                    Natura Essence<br>
+                    Unit 4, Natura House<br>
+                    18 Greenleaf Avenue<br>
+                    Dublin 2, Ireland
+                </address>
+            </div>
+            <div>
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="basket.html">Basket</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <small>&copy; 2026 Natura Essence. Student project for CCT College Dublin. Not a real store.</small>
+        </div>
+    </footer>
+
+    <!-- Script at the end of the page, so the form already exists when it runs. -->
+    <script src="js/register.js"></script>
+</body>
+</html>
