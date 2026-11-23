@@ -52,7 +52,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Reads every product from the database and sends the list to the browser as JSON.
 app.get("/api/products", function (req, res) {
     // Only the columns the website needs are selected
-    const sql = "SELECT id, name, category, description, price, image FROM products ORDER BY id";
+    const sql = "SELECT id, name, category, size, description, price, image FROM products ORDER BY id";
 
     db.query(sql, function (error, results) {
         if (error) {

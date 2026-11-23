@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS products (
     id          INT AUTO_INCREMENT PRIMARY KEY,        -- unique product number
     name        VARCHAR(100) NOT NULL,                 -- product name
     category    VARCHAR(50) NOT NULL,                  -- e.g. Teas, Oils, Supplements
+    size        VARCHAR(50) NOT NULL,                  -- pack size and format, e.g. "50 g · Loose-leaf tea"
     description TEXT NOT NULL,                         -- short text shown on the product card
     price       DECIMAL(10, 2) NOT NULL,               -- DECIMAL keeps exact cents (FLOAT could round 9.99 to 9.9899...)
     image       VARCHAR(255) NOT NULL,                 -- image file name inside public/images/products/
@@ -48,7 +49,7 @@ CREATE TABLE IF NOT EXISTS products (
 
 
 -- ---------- Check the result ----------
--- Both tables are empty for now; the products are added in a later step.
+-- Both tables start empty; the products are added by running products.sql.
 SHOW TABLES;
 DESCRIBE users;
 DESCRIBE products;
