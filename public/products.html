@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!--
+    products.html
+    Shop page. The products are not written in this file: js/products.js
+    loads them from the database (GET /api/products) and builds a card
+    for each one, plus the category filter buttons.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Shop nature-inspired wellness essentials from Natura Essence.">
+    <title>Natura Essence | Shop</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header: logo and main navigation, shared by all pages. -->
+    <header class="site-header">
+        <div class="container navbar">
+            <a class="logo" href="index.html">
+                <img src="images/logo.png" alt="Natura Essence - Nature-Inspired Wellness, Naturally." width="260" height="60">
+            </a>
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a class="active" href="products.html" aria-current="page">Shop</a></li>
+                    <li><a href="basket.html">Basket</a></li>
+                    <li><a class="auth-link" href="login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Page title and short introduction to the catalogue. -->
+        <section class="page-header">
+            <div class="container">
+                <h1>Shop Our Collection</h1>
+                <p>Nature-inspired wellness essentials, carefully selected for your everyday routine.</p>
+            </div>
+        </section>
+
+        <section class="shop">
+            <div class="container">
+                <!-- Category filter buttons, created by js/products.js
+                     from the categories that exist in the database. -->
+                <div class="category-filters" id="categoryFilters" role="group" aria-label="Filter products by category"></div>
+
+                <!-- Loading or error message (read aloud by screen readers). -->
+                <p class="products-status" id="productsStatus" role="status" aria-live="polite">Loading products...</p>
+
+                <!-- Product cards are added here by js/products.js. -->
+                <div class="product-grid" id="productGrid"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer: brand, contact details and navigation, shared by all pages. -->
+    <footer class="site-footer">
+        <div class="container three-col">
+            <div>
+                <h2>Natura Essence</h2>
+                <p>Nature-Inspired Wellness, Naturally.</p>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <address>
+                    <a href="mailto:contact@natura-essence.com">contact@natura-essence.com</a><br>
+                    Natura Essence<br>
+                    Unit 4, Natura House<br>
+                    18 Greenleaf Avenue<br>
+                    Dublin 2, Ireland
+                </address>
+            </div>
+            <div>
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="basket.html">Basket</a></li>
+                    <li><a class="auth-link" href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <small>&copy; 2026 Natura Essence. Student project for CCT College Dublin. Not a real store.</small>
+        </div>
+    </footer>
+
+    <!-- Scripts at the end of the page, so the elements already exist when they run. -->
+    <script src="js/nav.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>
