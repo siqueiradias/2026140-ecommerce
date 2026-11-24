@@ -14,18 +14,27 @@ require("dotenv").config({ quiet: true });
 const express = require("express"); // web framework for Node.js
 const helmet = require("helmet");   // adds secure HTTP headers, including a Content Security Policy
 const path = require("path");       // built-in Node.js module to build folder paths safely
+const session = require("express-session");     // remembers the logged-in user between pages
+const rateLimit = require("express-rate-limit"); // limits repeated login attempts
 
 // Import the MySQL connection pool created in database.js
 const db = require("./database");
 
-// Import the password hashing function created in password.js
-const { createPasswordHash } = require("./password");
+// Import the password functions created in password.js
+const { createPasswordHash, verifyPassword } = require("./password");
 
 // Create the Express application
 const app = express();
 
 // Port where the server listens, taken from .env (3000 if it is missing)
 const PORT = process.env.PORT || 3000;
+
+// The session secret signs the session cookie so it cannot be forged.
+// Stop with a clear message if it is missing from .env.
+if (!process.env.SESSION_SECRET) {
+    console.log("SESSION_SECRET is missing in the .env file (see .env.example)");
+    process.exit(1);
+}
 
 
 // ---------- Middleware ----------
@@ -46,6 +55,30 @@ app.use(helmet({
 
 // Read JSON data sent by the browser with fetch() and place it in req.body
 app.use(express.json());
+
+// Sessions: after login the server stores the user's details on the server side
+// and gives the browser only a signed cookie with a random session id.
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,                // do not save the session again if nothing changed
+    saveUninitialized: false,     // only create a session (and cookie) after a successful login
+    cookie: {
+        httpOnly: true,           // JavaScript in the page cannot read the cookie (protects against XSS)
+        sameSite: "lax",          // cookie is not sent by forms on other websites (protects against CSRF)
+        maxAge: 2 * 60 * 60 * 1000 // session lasts 2 hours (value in milliseconds)
+    }
+}));
+
+// Rate limit for the login route: at most 5 failed attempts every 15 minutes
+// from the same IP address, which stops "brute force" password guessing.
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,     // 15 minutes
+    limit: 5,                     // maximum attempts in that time
+    skipSuccessfulRequests: true, // a correct login does not count as an attempt
+    standardHeaders: "draft-8",   // tell the browser how long to wait (RateLimit header)
+    legacyHeaders: false,
+    message: { message: "Too many login attempts. Please try again in 15 minutes." }
+});
 
 // Serve the static files stored in the "public" folder.
 // index.html opens automatically when the user visits http://localhost:3000
@@ -120,6 +153,82 @@ app.post("/api/register", function (req, res) {
         // Status 201 (Created): the new user row was inserted
         res.status(201).json({ message: "Account created successfully! You can now log in." });
     });
+});
+
+// POST /api/login
+// Checks the email and password and, if they are correct, starts a session.
+// loginLimiter runs first and blocks the request after too many failed attempts.
+app.post("/api/login", loginLimiter, function (req, res) {
+    const email = typeof req.body.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    const password = typeof req.body.password === "string" ? req.body.password : "";
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        return res.status(400).json({ message: "Please enter a valid email address." });
+    }
+
+    if (password === "") {
+        return res.status(400).json({ message: "Please enter your password." });
+    }
+
+    // Look for the user with this email (? placeholder protects against SQL injection)
+    const sql = "SELECT id, name, email, password FROM users WHERE email = ?";
+
+    db.query(sql, [email], function (error, results) {
+        if (error) {
+            console.log("Error during login:", error.message);
+            return res.status(500).json({ message: "Something went wrong. Please try again later." });
+        }
+
+        // The same message is used for "email not found" and "wrong password",
+        // so an attacker cannot find out which emails are registered.
+        // Status 401 means the login details are not valid.
+        if (results.length === 0 || !verifyPassword(password, results[0].password)) {
+            return res.status(401).json({ message: "Invalid email or password." });
+        }
+
+        const user = results[0];
+
+        // Create a brand-new session id at login (prevents "session fixation" attacks,
+        // where an attacker tries to make the victim use a session id they already know)
+        req.session.regenerate(function (sessionError) {
+            if (sessionError) {
+                console.log("Error creating session:", sessionError.message);
+                return res.status(500).json({ message: "Something went wrong. Please try again later." });
+            }
+
+            // Store only what the website needs; the password hash is never stored in the session
+            req.session.user = { id: user.id, name: user.name, email: user.email };
+
+            // Use only the first name in the welcome message
+            const firstName = user.name.split(" ")[0];
+            res.json({ message: "Welcome back, " + firstName + "!" });
+        });
+    });
+});
+
+// POST /api/logout
+// Ends the session on the server and removes the session cookie from the browser.
+app.post("/api/logout", function (req, res) {
+    req.session.destroy(function (error) {
+        if (error) {
+            console.log("Error during logout:", error.message);
+            return res.status(500).json({ message: "Something went wrong. Please try again later." });
+        }
+
+        res.clearCookie("connect.sid"); // default name of the express-session cookie
+        res.json({ message: "Logged out" });
+    });
+});
+
+// GET /api/session
+// Tells the browser whether someone is logged in, so the menu can show
+// "Login" or "Logout". Only the name is sent, never the password.
+app.get("/api/session", function (req, res) {
+    if (req.session.user) {
+        return res.json({ loggedIn: true, name: req.session.user.name });
+    }
+
+    res.json({ loggedIn: false });
 });
 
 

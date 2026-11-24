@@ -24,5 +24,25 @@ function createPasswordHash(password) {
     return salt + ":" + hashPassword(password, salt);
 }
 
+// Check a password typed at login against the "salt:hash" saved in the database.
+// The same salt is used to hash the typed password; if both hashes are equal,
+// the password is correct.
+function verifyPassword(password, storedValue) {
+    const parts = storedValue.split(":");
+
+    // Stored value not in the expected "salt:hash" format
+    if (parts.length !== 2) {
+        return false;
+    }
+
+    const salt = parts[0];
+    const savedHash = Buffer.from(parts[1], "hex");
+    const typedHash = Buffer.from(hashPassword(password, salt), "hex");
+
+    // timingSafeEqual compares the hashes in constant time, so an attacker
+    // cannot learn anything from how long the comparison takes
+    return savedHash.length === typedHash.length && crypto.timingSafeEqual(savedHash, typedHash);
+}
+
 // Make the functions available to server.js
-module.exports = { hashPassword, createPasswordHash };
+module.exports = { hashPassword, createPasswordHash, verifyPassword };
