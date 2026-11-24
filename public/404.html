@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!--
+    404.html
+    Shown by server.js (with status 404) when an address does not exist.
+    All links start with "/" because this page can open at any address
+    (e.g. /a/b/c); "/" makes them always start from the main folder.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Page not found.">
+    <title>Natura Essence | Page Not Found</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Header: logo and main navigation, shared by all pages. -->
+    <header class="site-header">
+        <div class="container navbar">
+            <a class="logo" href="/index.html">
+                <img src="/images/logo.png" alt="Natura Essence - Nature-Inspired Wellness, Naturally." width="260" height="60">
+            </a>
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/products.html">Shop</a></li>
+                    <li><a class="basket-link" href="/basket.html">Basket</a></li>
+                    <li><a class="auth-link" href="/login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Error message with links back to the main pages. -->
+        <section class="error-page">
+            <div class="container narrow">
+                <p class="error-code" aria-hidden="true">404</p>
+                <h1>Page Not Found</h1>
+                <p>Sorry, the page you are looking for does not exist or has been moved.</p>
+                <div class="error-actions">
+                    <a class="btn primary" href="/index.html">Back to Home</a>
+                    <a class="btn secondary" href="/products.html">Continue Shopping</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer: brand, contact details and navigation, shared by all pages. -->
+    <footer class="site-footer">
+        <div class="container three-col">
+            <div>
+                <h2>Natura Essence</h2>
+                <p>Nature-Inspired Wellness, Naturally.</p>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <address>
+                    <a href="mailto:contact@natura-essence.com">contact@natura-essence.com</a><br>
+                    Natura Essence<br>
+                    Unit 4, Natura House<br>
+                    18 Greenleaf Avenue<br>
+                    Dublin 2, Ireland
+                </address>
+            </div>
+            <div>
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/products.html">Shop</a></li>
+                    <li><a href="/basket.html">Basket</a></li>
+                    <li><a class="auth-link" href="/login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <small>&copy; 2026 Natura Essence. Student project for CCT College Dublin. Not a real store.</small>
+        </div>
+    </footer>
+
+    <!-- Menu scripts: basket item count and "Login" or "Logout", depending on the session. -->
+    <script src="/js/basket-storage.js"></script>
+    <script src="/js/nav.js"></script>
+</body>
+</html>

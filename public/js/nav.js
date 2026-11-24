@@ -46,5 +46,6 @@ async function logout(event) {
     }
 
     // Back to the home page, where the menu shows "Login" again
-    window.location.href = "index.html";
+    // "/" at the start makes the address work from any page, including the 404 page
+    window.location.href = "/index.html";
 }

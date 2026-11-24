@@ -313,6 +313,35 @@ app.post("/api/orders", function (req, res) {
 });
 
 
+// ---------- Error handling ----------
+// These handlers are placed after all the routes, so they only run when
+// no route above answered the request or when something went wrong.
+
+// Unknown API address (e.g. /api/xyz): answer in JSON, like the other API routes
+app.use("/api", function (req, res) {
+    res.status(404).json({ message: "The requested resource was not found." });
+});
+
+// Any other unknown address: show the 404 page with the status 404
+app.use(function (req, res) {
+    res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
+});
+
+// Error handler. Express knows it is an error handler because it has 4 parameters.
+// It runs when something fails, e.g. when the browser sends broken JSON.
+// The user gets a simple message; the real error is shown only in the terminal.
+app.use(function (error, req, res, next) {
+    // Errors with a 4xx status come from bad data sent by the browser
+    // (e.g. broken JSON or a request that is too big)
+    if (error.status >= 400 && error.status < 500) {
+        return res.status(error.status).json({ message: "Invalid request data." });
+    }
+
+    console.log("Unexpected error:", error.message);
+    res.status(500).json({ message: "Something went wrong. Please try again later." });
+});
+
+
 // ---------- Start the server ----------
 
 // Test the database connection first and start the server only if it works.

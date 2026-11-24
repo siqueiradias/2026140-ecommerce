@@ -145,6 +145,7 @@ img {
     font-weight: bold;
     text-decoration: none;
     transition: background-color 0.2s;
+    border: 2px solid transparent;  /* same height as the outlined button */
 }
 
 .btn.primary {
@@ -580,6 +581,41 @@ img {
     font-family: Georgia, "Times New Roman", serif;
     font-size: 1.5rem;
     font-weight: bold;
+}
+
+/* ---------- 404 page ---------- */
+.error-page {
+    padding: 70px 0 80px;
+    text-align: center;
+}
+
+/* Big "404" number in light green (decorative).
+   ".error-page .error-code" is more specific than ".error-page p" below,
+   so this font size wins. */
+.error-page .error-code {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 6rem;
+    font-weight: bold;
+    line-height: 1;
+    color: var(--sage);
+}
+
+.error-page h1 {
+    margin: 10px 0 14px;
+    font-size: 2.2rem;
+}
+
+.error-page p {
+    font-size: 1.1rem;
+}
+
+.error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 28px;
 }
 
 /* ---------- Forms (register and login pages) ---------- */
