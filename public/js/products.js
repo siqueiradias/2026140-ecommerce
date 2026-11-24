@@ -12,7 +12,7 @@ const productGrid = document.getElementById("productGrid");
 const categoryFilters = document.getElementById("categoryFilters");
 const productsStatus = document.getElementById("productsStatus");
 
-// Full list of products received from the server (kept for the filter)
+// All the products from the server (kept for the filter)
 let allProducts = [];
 
 // Formats a number as euros, e.g. 7.95 -> "€7.95" (Irish English format)
@@ -42,8 +42,8 @@ async function loadProducts() {
 }
 
 // Create one product card for each product in the list.
-// Elements are built with createElement and textContent (not innerHTML),
-// so text coming from the database can never run as HTML (XSS protection).
+// We use createElement and textContent (not innerHTML),
+// so text from the database can never run as HTML (XSS protection).
 function showProducts(products) {
     productGrid.textContent = ""; // remove the cards shown before
 
@@ -56,7 +56,7 @@ function showProducts(products) {
         image.alt = product.name;
         image.width = 800;
         image.height = 800;
-        image.loading = "lazy"; // only download the image when it is about to appear on screen
+        image.loading = "lazy"; // load the image only when the user scrolls near it
 
         const body = document.createElement("div");
         body.className = "product-body";
@@ -106,8 +106,8 @@ function showProducts(products) {
 }
 
 // Create the filter buttons: "All" plus one button per category.
-// The categories come from the products themselves, so a new category
-// added to the database appears here automatically.
+// The categories come from the products, so a new category
+// in the database shows here automatically.
 function createCategoryFilters(products) {
     const categories = [];
 
@@ -130,7 +130,7 @@ function addFilterButton(category, selected) {
     button.type = "button";
     button.className = "filter-button";
     button.textContent = category;
-    // aria-pressed tells screen readers which filter is currently selected
+    // aria-pressed tells screen readers which filter is selected
     button.setAttribute("aria-pressed", selected ? "true" : "false");
 
     button.addEventListener("click", function () {

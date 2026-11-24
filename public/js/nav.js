@@ -1,10 +1,10 @@
 /*
  * nav.js
- * Loaded on every page (after basket-storage.js).
+ * Every page loads this file (after basket-storage.js).
  * 1. Shows how many items are in the basket: "Basket (3)".
  * 2. Asks the server if a user is logged in and changes the "Login"
  *    links in the header and footer to "Logout".
- * Clicking "Logout" ends the session and returns to the home page.
+ * When the user clicks "Logout", the session ends and the home page opens.
  */
 
 // Run as soon as the page loads
@@ -30,7 +30,7 @@ async function updateAuthLinks() {
             link.addEventListener("click", logout);
         });
     } catch (error) {
-        // If the server cannot be reached, simply keep the "Login" links
+        // If the server does not answer, keep the "Login" links
         console.log("Could not check the session:", error);
     }
 }

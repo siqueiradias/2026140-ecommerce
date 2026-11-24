@@ -1,20 +1,20 @@
 /*
  * basket-storage.js
  * Shared functions to read and change the shopping basket.
- * Loaded on every page (before nav.js) so the menu can show the item count.
+ * Every page loads this file (before nav.js), so the menu can show the item count.
  *
- * The basket is kept in the browser's localStorage, so it is not lost when
+ * The basket is saved in the browser's localStorage, so it stays when
  * the user changes page or closes the tab. Only the product id and the
- * quantity are stored, e.g. [{ "id": 3, "quantity": 2 }].
- * Names and prices are always read from the database, so the price shown
- * is the real one and cannot be changed by editing the browser storage.
+ * quantity are saved, e.g. [{ "id": 3, "quantity": 2 }].
+ * Names and prices always come from the database, so the price on screen
+ * is the real one. Editing the browser storage cannot change it.
  */
 
 // Name of the localStorage entry that holds the basket
 const BASKET_KEY = "naturaEssenceBasket";
 
-// Read the basket. Returns an empty list if there is no basket yet
-// or if the stored text is damaged.
+// Read the basket. Return an empty list if there is no basket yet
+// or if the saved text is broken.
 function getBasket() {
     try {
         const saved = JSON.parse(localStorage.getItem(BASKET_KEY));
@@ -23,8 +23,8 @@ function getBasket() {
             return [];
         }
 
-        // Keep only valid lines: whole-number id and quantity of at least 1.
-        // localStorage can be edited by the user, so its content is not trusted.
+        // Keep only valid lines: an integer id and a quantity of at least 1.
+        // The user can edit localStorage, so we do not trust its content.
         return saved.filter(function (line) {
             return line !== null && Number.isInteger(line.id) && Number.isInteger(line.quantity) && line.quantity >= 1;
         });
@@ -33,7 +33,7 @@ function getBasket() {
     }
 }
 
-// Save the basket (localStorage only stores text, so the list becomes JSON)
+// Save the basket (localStorage only stores text, so the list is saved as JSON)
 function saveBasket(basket) {
     try {
         localStorage.setItem(BASKET_KEY, JSON.stringify(basket));

@@ -2,7 +2,7 @@
  * register.js
  * Browser side of the registration page.
  * 1. Checks the form fields and shows an error under each wrong field
- *    (same approach as the contact form of my CA1 website).
+ *    (same idea as the contact form on my CA1 website).
  * 2. If everything is correct, sends the data to the server with fetch()
  *    and shows the server's answer to the user.
  */
@@ -10,7 +10,7 @@
 const registerForm = document.getElementById("registerForm");
 
 registerForm.addEventListener("submit", async function (event) {
-    // Stop the browser from reloading the page; JavaScript sends the data instead
+    // Stop the browser from reloading the page. JavaScript sends the data instead.
     event.preventDefault();
 
     clearErrors();
@@ -76,7 +76,7 @@ registerForm.addEventListener("submit", async function (event) {
     }
 });
 
-// Show an error message under the field that needs attention
+// Show an error message under the field with the problem
 function showError(fieldId, message) {
     document.getElementById(fieldId + "Error").textContent = message;
     document.getElementById(fieldId).classList.add("invalid");
@@ -97,7 +97,7 @@ function clearErrors() {
 
 // Show the general message at the bottom of the form.
 // type is "success" (green) or "error" (red).
-// textContent (not innerHTML) is used so text can never run as HTML (XSS protection).
+// We use textContent (not innerHTML), so the text can never run as HTML (XSS protection).
 function showStatus(message, type) {
     const status = document.getElementById("formStatus");
     status.textContent = message;

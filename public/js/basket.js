@@ -22,7 +22,7 @@ const priceFormat = new Intl.NumberFormat("en-IE", { style: "currency", currency
 loadBasket();
 
 async function loadBasket() {
-    // No need to ask the server if the basket is empty
+    // If the basket is empty, there is no need to call the server
     if (getBasket().length === 0) {
         showBasket();
         return;
@@ -43,9 +43,9 @@ async function loadBasket() {
     }
 }
 
-// Draw the whole basket again. Called when the page opens and after every change.
+// Draw the whole basket again. This runs when the page opens and after every change.
 function showBasket() {
-    // Join each basket line with its product details from the database.
+    // Match each basket line with its product details from the database.
     const lines = [];
 
     getBasket().forEach(function (item) {
@@ -58,8 +58,8 @@ function showBasket() {
         }
     });
 
-    // Save the basket again without the products that no longer exist in
-    // the database, so they are not counted in "Basket (n)" either
+    // Save the basket again without the products that are no longer in
+    // the database, so "Basket (n)" does not count them
     saveBasket(lines.map(function (line) {
         return { id: line.product.id, quantity: line.quantity };
     }));
@@ -92,9 +92,9 @@ function showBasket() {
     document.getElementById("summaryTotal").textContent = priceFormat.format(totalPrice);
 }
 
-// Create one table row. Elements are built with createElement and
-// textContent (not innerHTML) as protection against XSS.
-// data-label is used by the CSS to show the column name on mobile screens.
+// Create one table row. We use createElement and textContent
+// (not innerHTML) to protect against XSS.
+// The CSS uses data-label to show the column name on mobile screens.
 function createRow(product, quantity, lineTotal) {
     const row = document.createElement("tr");
 
@@ -105,7 +105,7 @@ function createRow(product, quantity, lineTotal) {
 
     const image = document.createElement("img");
     image.src = "images/products/" + product.image;
-    image.alt = "";            // decorative: the product name is written next to it
+    image.alt = "";            // decorative: the product name is shown next to it
     image.width = 72;
     image.height = 72;
 
