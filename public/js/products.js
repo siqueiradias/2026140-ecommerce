@@ -2,7 +2,7 @@
  * products.js
  * Builds the shop page:
  * 1. Loads all products from the server (GET /api/products, which reads MySQL).
- * 2. Creates one card per product.
+ * 2. Creates one card per product, with an "Add to Basket" button.
  * 3. Creates a filter button for each category, so the user can see
  *    only one category without reloading the page.
  */
@@ -81,7 +81,25 @@ function showProducts(products) {
         price.className = "product-price";
         price.textContent = priceFormat.format(product.price);
 
-        body.append(category, name, size, description, price);
+        // "Add to Basket" button: saves the product id in the basket (basket-storage.js)
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn primary add-button";
+        button.textContent = "Add to Basket";
+        button.addEventListener("click", function () {
+            addToBasket(product.id);
+            updateBasketLink(); // refresh "Basket (n)" in the menu
+
+            // Short confirmation on the button, then back to the normal text
+            button.textContent = "Added to basket ✓";
+            button.classList.add("added");
+            setTimeout(function () {
+                button.textContent = "Add to Basket";
+                button.classList.remove("added");
+            }, 1500);
+        });
+
+        body.append(category, name, size, description, price, button);
         card.append(image, body);
         productGrid.append(card);
     });

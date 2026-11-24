@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!--
+    basket.html
+    Shopping basket page. js/basket.js reads the basket saved in the browser
+    (product ids and quantities), loads the current names and prices from the
+    database (GET /api/products) and builds the list and the order summary.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your Natura Essence shopping basket.">
+    <title>Natura Essence | Your Basket</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header: logo and main navigation, shared by all pages. -->
+    <header class="site-header">
+        <div class="container navbar">
+            <a class="logo" href="index.html">
+                <img src="images/logo.png" alt="Natura Essence - Nature-Inspired Wellness, Naturally." width="260" height="60">
+            </a>
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a class="basket-link active" href="basket.html" aria-current="page">Basket</a></li>
+                    <li><a class="auth-link" href="login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Page title and short introduction. -->
+        <section class="page-header">
+            <div class="container">
+                <h1>Your Basket</h1>
+                <p>Review your items before checkout.</p>
+            </div>
+        </section>
+
+        <section class="basket">
+            <div class="container">
+                <!-- Error message if the products cannot be loaded. -->
+                <p class="products-status" id="basketStatus" role="status" aria-live="polite"></p>
+
+                <!-- Shown when the basket has no items. -->
+                <div class="basket-empty" id="basketEmpty" hidden>
+                    <p>Your basket is empty.</p>
+                    <a class="btn primary" href="products.html">Continue Shopping</a>
+                </div>
+
+                <!-- Shown when the basket has items: list of products and order summary. -->
+                <div class="basket-layout" id="basketContent" hidden>
+                    <table class="basket-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                                <th scope="col"><span class="visually-hidden">Remove</span></th>
+                            </tr>
+                        </thead>
+                        <!-- One row per product, created by js/basket.js. -->
+                        <tbody id="basketItems"></tbody>
+                    </table>
+
+                    <aside class="basket-summary" aria-labelledby="summaryTitle">
+                        <h2 id="summaryTitle">Order Summary</h2>
+                        <p class="summary-line"><span>Items</span> <span id="summaryItems">0</span></p>
+                        <p class="summary-line summary-total"><span>Total</span> <span id="summaryTotal">&euro;0.00</span></p>
+                        <a class="btn secondary" href="products.html">Continue Shopping</a>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer: brand, contact details and navigation, shared by all pages. -->
+    <footer class="site-footer">
+        <div class="container three-col">
+            <div>
+                <h2>Natura Essence</h2>
+                <p>Nature-Inspired Wellness, Naturally.</p>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <address>
+                    <a href="mailto:contact@natura-essence.com">contact@natura-essence.com</a><br>
+                    Natura Essence<br>
+                    Unit 4, Natura House<br>
+                    18 Greenleaf Avenue<br>
+                    Dublin 2, Ireland
+                </address>
+            </div>
+            <div>
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="basket.html">Basket</a></li>
+                    <li><a class="auth-link" href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <small>&copy; 2026 Natura Essence. Student project for CCT College Dublin. Not a real store.</small>
+        </div>
+    </footer>
+
+    <!-- Scripts at the end of the page, so the elements already exist when they run. -->
+    <script src="js/basket-storage.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/basket.js"></script>
+</body>
+</html>

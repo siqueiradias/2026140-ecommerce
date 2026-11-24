@@ -157,6 +157,30 @@ img {
     background-color: var(--forest-dark);
 }
 
+/* Outlined button for secondary actions (e.g. "Continue Shopping") */
+.btn.secondary {
+    background-color: transparent;
+    color: var(--forest);
+    border: 2px solid var(--forest);
+    text-align: center;
+}
+
+.btn.secondary:hover,
+.btn.secondary:focus-visible {
+    background-color: var(--forest);
+    color: var(--white);
+}
+
+/* Text only for screen readers (e.g. the "Remove" column heading) */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
 /* ---------- About section ---------- */
 .about {
     padding: 60px 0;
@@ -301,11 +325,178 @@ img {
     font-size: 0.95rem;
 }
 
-/* margin-top: auto pushes the price to the bottom of the card */
+/* margin-top: auto pushes the price and button to the bottom of the card */
 .product-price {
-    margin: auto 0 0;
+    margin: auto 0 14px;
     font-size: 1.3rem;
     font-weight: bold;
+}
+
+/* "Add to Basket" button fills the width of the card */
+.add-button {
+    width: 100%;
+    padding: 11px 16px;
+    border: none;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Lighter green for 1.5 seconds after a product is added */
+.add-button.added,
+.add-button.added:hover {
+    background-color: var(--herbal);
+}
+
+/* ---------- Basket page ---------- */
+.basket {
+    padding: 36px 0 60px;
+}
+
+/* Empty basket message */
+.basket-empty {
+    text-align: center;
+    font-size: 1.15rem;
+}
+
+/* Product list on the left, order summary on the right */
+.basket-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 30px;
+    align-items: start;
+}
+
+/* The hidden attribute must win over display: grid */
+.basket-layout[hidden],
+.basket-empty[hidden] {
+    display: none;
+}
+
+.basket-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(23, 74, 53, 0.08);
+}
+
+.basket-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background-color: #E9EFE1;
+}
+
+.basket-table td {
+    padding: 14px 16px;
+    border-top: 1px solid var(--cream);
+    vertical-align: middle;
+}
+
+.basket-product {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.basket-product img {
+    width: 72px;
+    height: 72px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.basket-size {
+    display: block;
+    font-size: 0.85rem;
+    color: #557A52;
+}
+
+.basket-line-total {
+    font-weight: bold;
+}
+
+/* "−  2  +" quantity buttons */
+.quantity-controls {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--sand);
+    border-radius: 999px;
+}
+
+.quantity-controls button {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    color: var(--forest);
+    background: none;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.quantity-controls button:hover:not(:disabled) {
+    background-color: #E9EFE1;
+}
+
+/* "−" is disabled when the quantity is 1 */
+.quantity-controls button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.quantity-value {
+    min-width: 28px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.remove-button {
+    padding: 0;
+    font: inherit;
+    font-size: 0.9rem;
+    color: #A33B2B;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Order summary card */
+.basket-summary {
+    padding: 24px;
+    background-color: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(23, 74, 53, 0.08);
+}
+
+.basket-summary h2 {
+    margin: 0 0 16px;
+    font-size: 1.4rem;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 10px;
+}
+
+.summary-total {
+    margin: 16px 0 20px;
+    padding-top: 14px;
+    border-top: 1px solid var(--sand);
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+/* Summary button fills the width of the card */
+.basket-summary .btn {
+    display: block;
+    width: 100%;
 }
 
 /* ---------- Forms (register and login pages) ---------- */
@@ -454,7 +645,8 @@ img {
 /* Tablets and small laptops: columns stack to keep the content readable */
 @media (max-width: 800px) {
     .two-col,
-    .three-col {
+    .three-col,
+    .basket-layout {
         grid-template-columns: 1fr;
     }
 
@@ -483,5 +675,42 @@ img {
 
     .hero {
         padding: 40px 0;
+    }
+
+    /* Basket table becomes one card per product: the column headings are
+       hidden and each cell shows its own label from the data-label attribute */
+    .basket-table thead {
+        display: none;
+    }
+
+    .basket-table tr,
+    .basket-table td {
+        display: block;
+    }
+
+    .basket-table tr {
+        padding: 10px 0;
+        border-top: 1px solid var(--sand);
+    }
+
+    .basket-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 16px;
+        border-top: none;
+    }
+
+    .basket-table td[data-label]:not(.basket-product)::before {
+        content: attr(data-label);
+        font-weight: bold;
+    }
+
+    .basket-table .basket-product {
+        justify-content: flex-start;
+    }
+
+    .basket-remove {
+        justify-content: flex-end;
     }
 }
