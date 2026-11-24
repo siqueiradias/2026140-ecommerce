@@ -1,9 +1,9 @@
 /*
  * style.css
  * Shared styles for every page of Natura Essence.
- * Layout classes (container, two-col, three-col) evolve from my CA1 website.
- * Colours follow the "Botanical Wellness" palette, stored as CSS variables
- * so they can be changed in one place.
+ * Layout classes (container, two-col, three-col) come from my CA1 website.
+ * The colours use the "Botanical Wellness" palette. They are saved as CSS
+ * variables, so you can change them in one place.
  */
 
 /* ---------- Colour palette (CSS custom properties) ---------- */
@@ -31,7 +31,7 @@ body {
     background-color: var(--cream);
 }
 
-/* Serif headings echo the style of the brand banner */
+/* Serif headings match the style of the brand banner */
 h1,
 h2,
 h3 {
@@ -263,8 +263,8 @@ img {
     display: none;
 }
 
-/* Product grid: as many columns of at least 240px as fit on the screen,
-   so it adapts to desktop, tablet and mobile without extra media queries */
+/* Product grid: it fits as many columns of at least 240px as the screen allows,
+   so it works on desktop, tablet and mobile without extra media queries */
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -288,7 +288,7 @@ img {
 
 .product-card img {
     width: 100%;
-    aspect-ratio: 1 / 1;             /* square space reserved while the image loads */
+    aspect-ratio: 1 / 1;             /* keeps a square space while the image loads */
     object-fit: cover;
 }
 
@@ -306,7 +306,7 @@ img {
     font-weight: bold;
     letter-spacing: 0.08em;
     text-transform: uppercase;       /* "Teas" is shown as "TEAS" */
-    color: #557A52;                  /* darker herbal green, readable on white */
+    color: #557A52;                  /* darker herbal green, easy to read on white */
 }
 
 .product-name {
@@ -497,6 +497,89 @@ img {
 .basket-summary .btn {
     display: block;
     width: 100%;
+}
+
+/* Space between the two buttons of the order summary */
+.basket-summary .btn + .btn {
+    margin-top: 10px;
+}
+
+/* ---------- Checkout page ---------- */
+.checkout {
+    padding: 36px 0 60px;
+}
+
+.checkout-card {
+    width: 90%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px;
+    background-color: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(23, 74, 53, 0.08);
+}
+
+.checkout-card h2 {
+    margin: 0 0 16px;
+    font-size: 1.5rem;
+}
+
+/* Centred messages: login required, empty basket and confirmation */
+.checkout-message {
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.checkout-message p {
+    margin: 0 0 18px;
+}
+
+/* The hidden attribute must win over the display rules above */
+.checkout-card [hidden] {
+    display: none;
+}
+
+/* Order review list: product on the left, price on the right */
+.checkout-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.checkout-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--cream);
+}
+
+.checkout-note {
+    margin: 0 0 18px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    background-color: var(--cream);
+    border-radius: 8px;
+}
+
+.checkout-button {
+    width: 100%;
+    border: none;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Disabled while the order is being sent */
+.checkout-button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.confirmation-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 /* ---------- Forms (register and login pages) ---------- */

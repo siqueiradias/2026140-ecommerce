@@ -48,8 +48,24 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 
+-- ---------- Table: orders ----------
+-- Stores every order placed at checkout: who placed it, the total and when.
+-- The order number shown to the customer is the id created by AUTO_INCREMENT.
+CREATE TABLE IF NOT EXISTS orders (
+    id         INT AUTO_INCREMENT PRIMARY KEY,         -- order number
+    user_id    INT NOT NULL,                           -- customer who placed the order
+    total      DECIMAL(10, 2) NOT NULL,                -- total calculated by the server from database prices
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    -- date and time of the order
+    -- Foreign key: user_id must match an existing id in the users table,
+    -- so an order can never belong to a customer that does not exist
+    CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT chk_order_total_positive CHECK (total > 0)
+);
+
+
 -- ---------- Check the result ----------
--- Both tables start empty; the products are added by running products.sql.
+-- The tables start empty; the products are added by running products.sql.
 SHOW TABLES;
 DESCRIBE users;
 DESCRIBE products;
+DESCRIBE orders;

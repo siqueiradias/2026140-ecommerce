@@ -1,19 +1,19 @@
 /*
  * server.js
- * Main entry point of the Natura Essence e-commerce application.
- * It creates the Express server, adds security headers with Helmet,
- * serves the frontend files (HTML, CSS, JavaScript and images)
- * from the "public" folder and answers the requests that need the database.
+ * Main file of the Natura Essence e-commerce app.
+ * It starts the Express server and adds security headers with Helmet.
+ * It sends the frontend files (HTML, CSS, JavaScript and images)
+ * from the "public" folder and handles the requests that use the database.
  */
 
-// Load the variables from the .env file (database password, port...)
+// Load the settings from the .env file (database password, port...)
 // This must run first, before database.js reads process.env
 require("dotenv").config({ quiet: true });
 
 // Import the packages used by the server
 const express = require("express"); // web framework for Node.js
 const helmet = require("helmet");   // adds secure HTTP headers, including a Content Security Policy
-const path = require("path");       // built-in Node.js module to build folder paths safely
+const path = require("path");       // built-in Node.js module to create folder paths safely
 const session = require("express-session");     // remembers the logged-in user between pages
 const rateLimit = require("express-rate-limit"); // limits repeated login attempts
 
@@ -29,8 +29,8 @@ const app = express();
 // Port where the server listens, taken from .env (3000 if it is missing)
 const PORT = process.env.PORT || 3000;
 
-// The session secret signs the session cookie so it cannot be forged.
-// Stop with a clear message if it is missing from .env.
+// The session secret signs the session cookie, so nobody can make a fake one.
+// If it is missing from .env, show a message and stop.
 if (!process.env.SESSION_SECRET) {
     console.log("SESSION_SECRET is missing in the .env file (see .env.example)");
     process.exit(1);
@@ -39,12 +39,12 @@ if (!process.env.SESSION_SECRET) {
 
 // ---------- Middleware ----------
 
-// Helmet sets security headers on every response.
+// Helmet adds security headers to every response.
 // Its Content Security Policy (CSP) only allows scripts, styles and images
-// that come from our own server, which helps prevent Cross-Site Scripting (XSS).
+// from our own server. This helps to stop Cross-Site Scripting (XSS).
 // "upgradeInsecureRequests" is turned off because the project runs on
-// http://localhost (no HTTPS); otherwise browsers such as Safari would try to
-// load the CSS and images over HTTPS and the page would break.
+// http://localhost (no HTTPS). Without this, browsers like Safari try to
+// load the CSS and images over HTTPS and the page breaks.
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -53,11 +53,11 @@ app.use(helmet({
     }
 }));
 
-// Read JSON data sent by the browser with fetch() and place it in req.body
+// Read the JSON data sent by the browser with fetch() and put it in req.body
 app.use(express.json());
 
-// Sessions: after login the server stores the user's details on the server side
-// and gives the browser only a signed cookie with a random session id.
+// Sessions: after login, the server keeps the user's details on the server.
+// The browser only gets a signed cookie with a random session id.
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,                // do not save the session again if nothing changed
@@ -69,8 +69,8 @@ app.use(session({
     }
 }));
 
-// Rate limit for the login route: at most 5 failed attempts every 15 minutes
-// from the same IP address, which stops "brute force" password guessing.
+// Rate limit for the login route: max 5 failed attempts in 15 minutes
+// from the same IP address. This stops "brute force" password guessing.
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,     // 15 minutes
     limit: 5,                     // maximum attempts in that time
@@ -90,12 +90,12 @@ app.use(express.static(path.join(__dirname, "public")));
 // GET /api/products
 // Reads every product from the database and sends the list to the browser as JSON.
 app.get("/api/products", function (req, res) {
-    // Only the columns the website needs are selected
+    // Select only the columns that the website needs
     const sql = "SELECT id, name, category, size, description, price, image FROM products ORDER BY id";
 
     db.query(sql, function (error, results) {
         if (error) {
-            // Log the real error for the developer, send a simple message to the user
+            // Show the real error in the terminal and send a simple message to the user
             console.log("Error reading products:", error.message);
             return res.status(500).json({ message: "Could not load products" });
         }
@@ -107,11 +107,11 @@ app.get("/api/products", function (req, res) {
 
 // POST /api/register
 // Creates a new customer account.
-// The same rules are checked in the browser (register.js), but the server
-// checks them again because browser checks can be skipped by a malicious user.
+// register.js checks the same rules in the browser, but the server checks
+// them again, because an attacker can skip the browser checks.
 app.post("/api/register", function (req, res) {
-    // Read the form fields. typeof checks that each value really is text,
-    // so unexpected data (numbers, objects...) cannot crash the server.
+    // Read the form fields. typeof checks that each value is text,
+    // so other data (numbers, objects...) cannot crash the server.
     const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
     const email = typeof req.body.email === "string" ? req.body.email.trim().toLowerCase() : "";
     const password = typeof req.body.password === "string" ? req.body.password : "";
@@ -134,13 +134,13 @@ app.post("/api/register", function (req, res) {
     // Never store the real password: save "salt:hash" instead
     const hashedPassword = createPasswordHash(password);
 
-    // The ? placeholders keep the user's input separate from the SQL command,
-    // which protects the database against SQL injection
+    // The ? placeholders keep the user's input separate from the SQL command.
+    // This protects the database against SQL injection.
     const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
 
     db.query(sql, [name, email, hashedPassword], function (error, result) {
         if (error) {
-            // The email column is UNIQUE, so MySQL refuses a repeated email.
+            // The email column is UNIQUE, so MySQL does not accept the same email twice.
             // Status 409 (Conflict) tells the browser the account already exists.
             if (error.code === "ER_DUP_ENTRY") {
                 return res.status(409).json({ message: "This email is already registered. Please log in instead." });
@@ -156,7 +156,7 @@ app.post("/api/register", function (req, res) {
 });
 
 // POST /api/login
-// Checks the email and password and, if they are correct, starts a session.
+// Checks the email and password. If they are correct, it starts a session.
 // loginLimiter runs first and blocks the request after too many failed attempts.
 app.post("/api/login", loginLimiter, function (req, res) {
     const email = typeof req.body.email === "string" ? req.body.email.trim().toLowerCase() : "";
@@ -170,7 +170,7 @@ app.post("/api/login", loginLimiter, function (req, res) {
         return res.status(400).json({ message: "Please enter your password." });
     }
 
-    // Look for the user with this email (? placeholder protects against SQL injection)
+    // Find the user with this email (the ? placeholder protects against SQL injection)
     const sql = "SELECT id, name, email, password FROM users WHERE email = ?";
 
     db.query(sql, [email], function (error, results) {
@@ -188,15 +188,15 @@ app.post("/api/login", loginLimiter, function (req, res) {
 
         const user = results[0];
 
-        // Create a brand-new session id at login (prevents "session fixation" attacks,
-        // where an attacker tries to make the victim use a session id they already know)
+        // Create a new session id at login. This stops "session fixation" attacks,
+        // where an attacker makes the victim use a session id the attacker already knows.
         req.session.regenerate(function (sessionError) {
             if (sessionError) {
                 console.log("Error creating session:", sessionError.message);
                 return res.status(500).json({ message: "Something went wrong. Please try again later." });
             }
 
-            // Store only what the website needs; the password hash is never stored in the session
+            // Store only what the website needs. Never put the password hash in the session.
             req.session.user = { id: user.id, name: user.name, email: user.email };
 
             // Use only the first name in the welcome message
@@ -221,7 +221,7 @@ app.post("/api/logout", function (req, res) {
 });
 
 // GET /api/session
-// Tells the browser whether someone is logged in, so the menu can show
+// Tells the browser if someone is logged in, so the menu can show
 // "Login" or "Logout". Only the name is sent, never the password.
 app.get("/api/session", function (req, res) {
     if (req.session.user) {
@@ -231,11 +231,92 @@ app.get("/api/session", function (req, res) {
     res.json({ loggedIn: false });
 });
 
+// POST /api/orders
+// Simulated checkout: saves a new order for the logged-in customer.
+// The browser sends only product ids and quantities, e.g. { items: [{ id: 1, quantity: 2 }] }.
+// The server calculates the total with the prices from the database,
+// so changing a price in the browser cannot change what the customer pays.
+app.post("/api/orders", function (req, res) {
+    // Only logged-in customers can place an order (status 401 = not logged in)
+    if (!req.session.user) {
+        return res.status(401).json({ message: "Please log in to complete your order." });
+    }
+
+    const items = req.body.items;
+    const invalidMessage = "Your basket contains invalid items. Please review your basket.";
+
+    // The basket must be a non-empty list
+    if (!Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ message: invalidMessage });
+    }
+
+    // Each line needs an integer id and a quantity of at least 1
+    const validItems = items.every(function (item) {
+        return item !== null && Number.isInteger(item.id) && Number.isInteger(item.quantity) && item.quantity >= 1;
+    });
+
+    if (!validItems) {
+        return res.status(400).json({ message: invalidMessage });
+    }
+
+    // Read the real prices of the products in the basket.
+    // mysql2 turns the list of ids into "IN (1, 5, 14)".
+    const ids = items.map(function (item) {
+        return item.id;
+    });
+    const sql = "SELECT id, price FROM products WHERE id IN (?)";
+
+    db.query(sql, [ids], function (error, products) {
+        if (error) {
+            console.log("Error reading prices:", error.message);
+            return res.status(500).json({ message: "Something went wrong. Please try again later." });
+        }
+
+        // Add up price × quantity for each line
+        let total = 0;
+
+        for (const item of items) {
+            const product = products.find(function (p) {
+                return p.id === item.id;
+            });
+
+            // The product id does not exist in the database
+            if (!product) {
+                return res.status(400).json({ message: invalidMessage });
+            }
+
+            total = total + product.price * item.quantity;
+        }
+
+        // Round to 2 decimal places (cents) to avoid results such as 40.699999
+        total = Math.round(total * 100) / 100;
+
+        // Save the order. AUTO_INCREMENT creates the new order number (id).
+        const insertSql = "INSERT INTO orders (user_id, total) VALUES (?, ?)";
+
+        db.query(insertSql, [req.session.user.id, total], function (insertError, result) {
+            if (insertError) {
+                console.log("Error saving order:", insertError.message);
+                return res.status(500).json({ message: "Something went wrong. Please try again later." });
+            }
+
+            const firstName = req.session.user.name.split(" ")[0];
+
+            // Status 201 (Created): the order was saved; result.insertId is its number
+            res.status(201).json({
+                message: "Thank you, " + firstName + "! Your order #" + result.insertId + " has been placed.",
+                orderId: result.insertId,
+                total: total
+            });
+        });
+    });
+});
+
 
 // ---------- Start the server ----------
 
-// Check the database connection first and only start the server if it works,
-// so a wrong password or a stopped MySQL is reported clearly in the terminal.
+// Test the database connection first and start the server only if it works.
+// This way, a wrong password or a stopped MySQL shows a clear message in the terminal.
 db.getConnection(function (error, connection) {
     if (error) {
         console.log("Database connection failed:", error.message);

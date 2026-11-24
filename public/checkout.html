@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!--
+    checkout.html
+    Simulated checkout. js/checkout.js checks that the customer is logged in,
+    shows the order review and sends the order to the server (POST /api/orders),
+    which calculates the total with database prices and saves the order.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Review and confirm your Natura Essence order.">
+    <title>Natura Essence | Checkout</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header: logo and main navigation, shared by all pages. -->
+    <header class="site-header">
+        <div class="container navbar">
+            <a class="logo" href="index.html">
+                <img src="images/logo.png" alt="Natura Essence - Nature-Inspired Wellness, Naturally." width="260" height="60">
+            </a>
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a class="basket-link" href="basket.html">Basket</a></li>
+                    <li><a class="auth-link" href="login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Page title and short introduction. -->
+        <section class="page-header">
+            <div class="container">
+                <h1>Checkout</h1>
+                <p>Review your order and confirm your purchase.</p>
+            </div>
+        </section>
+
+        <section class="checkout">
+            <div class="checkout-card">
+                <!-- Error messages (read aloud by screen readers). -->
+                <p class="products-status" id="checkoutStatus" role="status" aria-live="polite"></p>
+
+                <!-- Shown when nobody is logged in. -->
+                <div class="checkout-message" id="loginRequired" hidden>
+                    <p>Please log in to complete your order.</p>
+                    <!-- ?next=checkout tells the login page to come back here after the login. -->
+                    <a class="btn primary" href="login.html?next=checkout">Log In</a>
+                </div>
+
+                <!-- Shown when the basket has no items. -->
+                <div class="checkout-message" id="checkoutEmpty" hidden>
+                    <p>Your basket is empty.</p>
+                    <a class="btn primary" href="products.html">Continue Shopping</a>
+                </div>
+
+                <!-- Order review: products, quantities and total. -->
+                <div id="checkoutReview" hidden>
+                    <h2>Order Review</h2>
+                    <!-- One line per product, created by js/checkout.js. -->
+                    <ul class="checkout-list" id="checkoutItems"></ul>
+                    <p class="summary-line summary-total"><span>Total</span> <span id="checkoutTotal">&euro;0.00</span></p>
+                    <p class="checkout-note">This is a simulated checkout. No payment will be taken.</p>
+                    <button type="button" class="btn primary checkout-button" id="placeOrderButton">Place Order</button>
+                </div>
+
+                <!-- Order confirmation, shown after the order is saved. -->
+                <div class="checkout-message confirmation" id="orderConfirmation" hidden>
+                    <p class="confirmation-title" id="confirmationMessage"></p>
+                    <p id="confirmationTotal"></p>
+                    <a class="btn primary" href="products.html">Continue Shopping</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer: brand, contact details and navigation, shared by all pages. -->
+    <footer class="site-footer">
+        <div class="container three-col">
+            <div>
+                <h2>Natura Essence</h2>
+                <p>Nature-Inspired Wellness, Naturally.</p>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <address>
+                    <a href="mailto:contact@natura-essence.com">contact@natura-essence.com</a><br>
+                    Natura Essence<br>
+                    Unit 4, Natura House<br>
+                    18 Greenleaf Avenue<br>
+                    Dublin 2, Ireland
+                </address>
+            </div>
+            <div>
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="basket.html">Basket</a></li>
+                    <li><a class="auth-link" href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <small>&copy; 2026 Natura Essence. Student project for CCT College Dublin. Not a real store.</small>
+        </div>
+    </footer>
+
+    <!-- Scripts at the end of the page, so the elements already exist when they run. -->
+    <script src="js/basket-storage.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/checkout.js"></script>
+</body>
+</html>
