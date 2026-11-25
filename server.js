@@ -272,8 +272,10 @@ app.post("/api/orders", function (req, res) {
             return res.status(500).json({ message: "Something went wrong. Please try again later." });
         }
 
-        // Add up price × quantity for each line
+        // Add up price × quantity for each line, and keep each line's
+        // database price to save it in the order_items table
         let total = 0;
+        const lines = [];
 
         for (const item of items) {
             const product = products.find(function (p) {
@@ -286,27 +288,78 @@ app.post("/api/orders", function (req, res) {
             }
 
             total = total + product.price * item.quantity;
+            lines.push({ productId: product.id, quantity: item.quantity, price: product.price });
         }
 
         // Round to 2 decimal places (cents) to avoid results such as 40.699999
         total = Math.round(total * 100) / 100;
 
-        // Save the order. AUTO_INCREMENT creates the new order number (id).
-        const insertSql = "INSERT INTO orders (user_id, total) VALUES (?, ?)";
-
-        db.query(insertSql, [req.session.user.id, total], function (insertError, result) {
-            if (insertError) {
-                console.log("Error saving order:", insertError.message);
+        // The order is saved with two INSERTs (orders, then order_items).
+        // A transaction makes them work as one: if the second INSERT fails,
+        // the first one is undone (rollback), so an order is never saved
+        // without its products. A transaction needs one fixed connection,
+        // so we take one connection from the pool.
+        db.getConnection(function (connectionError, connection) {
+            if (connectionError) {
+                console.log("Error getting a connection:", connectionError.message);
                 return res.status(500).json({ message: "Something went wrong. Please try again later." });
             }
 
-            const firstName = req.session.user.name.split(" ")[0];
+            // Undo everything, give the connection back to the pool and answer with an error
+            function cancelOrder(error) {
+                console.log("Error saving order:", error.message);
+                connection.rollback(function () {
+                    connection.release();
+                    res.status(500).json({ message: "Something went wrong. Please try again later." });
+                });
+            }
 
-            // Status 201 (Created): the order was saved; result.insertId is its number
-            res.status(201).json({
-                message: "Thank you, " + firstName + "! Your order #" + result.insertId + " has been placed.",
-                orderId: result.insertId,
-                total: total
+            connection.beginTransaction(function (transactionError) {
+                if (transactionError) {
+                    return cancelOrder(transactionError);
+                }
+
+                // 1. Save the order. AUTO_INCREMENT creates the new order number (id).
+                const orderSql = "INSERT INTO orders (user_id, total) VALUES (?, ?)";
+
+                connection.query(orderSql, [req.session.user.id, total], function (orderError, orderResult) {
+                    if (orderError) {
+                        return cancelOrder(orderError);
+                    }
+
+                    const orderId = orderResult.insertId;
+
+                    // 2. Save one row per product: [order_id, product_id, quantity, unit_price].
+                    // "VALUES ?" with a list of rows inserts all of them in one query.
+                    const itemRows = lines.map(function (line) {
+                        return [orderId, line.productId, line.quantity, line.price];
+                    });
+                    const itemsSql = "INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES ?";
+
+                    connection.query(itemsSql, [itemRows], function (itemsError) {
+                        if (itemsError) {
+                            return cancelOrder(itemsError);
+                        }
+
+                        // 3. Both INSERTs worked: make them permanent (commit)
+                        connection.commit(function (commitError) {
+                            if (commitError) {
+                                return cancelOrder(commitError);
+                            }
+
+                            connection.release(); // give the connection back to the pool
+
+                            const firstName = req.session.user.name.split(" ")[0];
+
+                            // Status 201 (Created): the order was saved; orderId is its number
+                            res.status(201).json({
+                                message: "Thank you, " + firstName + "! Your order #" + orderId + " has been placed.",
+                                orderId: orderId,
+                                total: total
+                            });
+                        });
+                    });
+                });
             });
         });
     });

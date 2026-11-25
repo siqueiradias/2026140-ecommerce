@@ -63,9 +63,27 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 
+-- ---------- Table: order_items ----------
+-- Stores the products of each order: one row per product, with the quantity
+-- and the price paid. Together with "orders" it shows exactly what was bought.
+CREATE TABLE IF NOT EXISTS order_items (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    order_id   INT NOT NULL,                           -- order this line belongs to
+    product_id INT NOT NULL,                           -- product that was bought
+    quantity   INT NOT NULL,                           -- number of units
+    unit_price DECIMAL(10, 2) NOT NULL,                -- price at the moment of purchase
+                                                       -- (the product price can change later)
+    -- Foreign keys: the order and the product must exist
+    CONSTRAINT fk_items_order FOREIGN KEY (order_id) REFERENCES orders(id),
+    CONSTRAINT fk_items_product FOREIGN KEY (product_id) REFERENCES products(id),
+    CONSTRAINT chk_item_quantity CHECK (quantity >= 1)
+);
+
+
 -- ---------- Check the result ----------
 -- The tables start empty; the products are added by running products.sql.
 SHOW TABLES;
 DESCRIBE users;
 DESCRIBE products;
 DESCRIBE orders;
+DESCRIBE order_items;
