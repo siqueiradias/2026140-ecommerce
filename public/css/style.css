@@ -29,6 +29,16 @@ body {
     line-height: 1.6;
     color: var(--forest);            /* dark green text on light background for good contrast */
     background-color: var(--cream);
+    /* Sticky footer: the page is at least as tall as the screen and is a column
+       (header, main, footer); main grows to fill the free space, so on short
+       pages the footer stays at the bottom of the screen instead of in the middle */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 /* Serif headings match the style of the brand banner */
@@ -829,7 +839,9 @@ img {
         justify-content: flex-start;
     }
 
-    .basket-remove {
+    /* ".basket-table" in front makes this rule more specific than
+       ".basket-table td" above, so "Remove" is aligned to the right */
+    .basket-table .basket-remove {
         justify-content: flex-end;
     }
 }
