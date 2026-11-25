@@ -13,7 +13,7 @@ require("dotenv").config({ quiet: true });
 // Import the packages used by the server
 const express = require("express"); // web framework for Node.js
 const helmet = require("helmet");   // adds secure HTTP headers, including a Content Security Policy
-const path = require("path");       // built-in Node.js module to create folder paths safely
+const path = require("path");       // built-in Node.js module to build file and folder paths safely
 const session = require("express-session");     // remembers the logged-in user between pages
 const rateLimit = require("express-rate-limit"); // limits repeated login attempts
 
@@ -56,7 +56,7 @@ app.use(helmet({
 // Read the JSON data sent by the browser with fetch() and put it in req.body
 app.use(express.json());
 
-// Sessions: after login, the server keeps the user's details on the server.
+// Sessions: after login, the user's details are kept on the server.
 // The browser only gets a signed cookie with a random session id.
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -64,7 +64,7 @@ app.use(session({
     saveUninitialized: false,     // only create a session (and cookie) after a successful login
     cookie: {
         httpOnly: true,           // JavaScript in the page cannot read the cookie (protects against XSS)
-        sameSite: "lax",          // cookie is not sent by forms on other websites (protects against CSRF)
+        sameSite: "lax",          // cookie is not sent with POST requests from other websites (protects against CSRF)
         maxAge: 2 * 60 * 60 * 1000 // session lasts 2 hours (value in milliseconds)
     }
 }));
@@ -284,7 +284,7 @@ app.post("/api/orders", function (req, res) {
             return res.status(500).json({ message: "Something went wrong. Please try again later." });
         }
 
-        // Add up price × quantity for each line, and keep each line's
+        // Add up price * quantity for each line, and keep each line's
         // database price to save it in the order_items table
         let total = 0;
         const lines = [];

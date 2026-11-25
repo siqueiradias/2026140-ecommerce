@@ -156,7 +156,7 @@ function createRow(product, quantity, lineTotal) {
     controls.append(minusButton, quantityText, plusButton);
     quantityCell.append(controls);
 
-    // Line total (price × quantity)
+    // Line total (price * quantity)
     const totalCell = document.createElement("td");
     totalCell.dataset.label = "Total";
     totalCell.className = "basket-line-total";

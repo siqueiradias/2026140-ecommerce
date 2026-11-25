@@ -29,9 +29,9 @@ body {
     line-height: 1.6;
     color: var(--forest);            /* dark green text on light background for good contrast */
     background-color: var(--cream);
-    /* Sticky footer: the page is at least as tall as the screen and is a column
-       (header, main, footer); main grows to fill the free space, so on short
-       pages the footer stays at the bottom of the screen instead of in the middle */
+    /* Sticky footer: the page is at least as tall as the screen and uses a flex
+       column (header, main, footer). main grows to fill the free space, so on
+       short pages the footer stays at the bottom of the screen, not in the middle */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
