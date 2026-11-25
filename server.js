@@ -259,6 +259,18 @@ app.post("/api/orders", function (req, res) {
         return res.status(400).json({ message: invalidMessage });
     }
 
+    // Each product can appear only once (the basket adds up quantities instead).
+    // A Set keeps only unique values, so a smaller Set means a repeated id.
+    // The order_items primary key (order_id, product_id) would also refuse it,
+    // but checking here gives the customer a clear 400 message instead of a 500 error.
+    const uniqueIds = new Set(items.map(function (item) {
+        return item.id;
+    }));
+
+    if (uniqueIds.size !== items.length) {
+        return res.status(400).json({ message: invalidMessage });
+    }
+
     // Read the real prices of the products in the basket.
     // mysql2 turns the list of ids into "IN (1, 5, 14)".
     const ids = items.map(function (item) {
